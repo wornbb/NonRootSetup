@@ -1,0 +1,60 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+# Set up Homebrew
+eval "$($NONROOT_PREFIX/homebrew/bin/brew shellenv)"
+# init zsh plugin manager
+export ZPLUG_HOME=$NONROOT_PREFIX/zplug
+source $ZPLUG_HOME/init.zsh
+
+# ----- plugin config start ------
+#ZVM_VI_ESCAPE_BINDKEY=jk
+VIM_MODE_VICMD_KEY=jk
+MODE_CURSOR_VIINS="#00ff00 blinking bar"
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
+# ----- plugin config end ------
+zplug "zsh-users/zsh-history-substring-search"
+zplug romkatv/powerlevel10k, as:theme, depth:1
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "agkozak/zsh-z"
+#zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "Aloxaf/fzf-tab"
+zplug "softmoth/zsh-vim-mode"
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+  echo; zplug install
+fi
+
+# Then, source plugins and add commands to $PATH
+zplug load
+
+# Styling
+export LS_COLORS='rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:'
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# preview directory's content with exa when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# switch group using `,` and `.`
+zstyle ':fzf-tab:*' switch-group ',' '.'
+# Alias
+alias vim=nvim
+alias ls='ls --color=auto'
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.zshrc.bk ] && source ~/.zshrc.bk
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+

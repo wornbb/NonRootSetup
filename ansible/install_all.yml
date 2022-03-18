@@ -1,0 +1,133 @@
+- name: Setting up config files
+  hosts: localhost
+  connection: local
+  vars:
+    # being absolutely explicit about what config to install
+    configs:
+      - zshrc
+      - p10k.zsh
+      - wezterm.lua
+      - vscode-server
+      - vscode
+      - vimrc
+    current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
+    source_config: "{{ playbook_dir | dirname }}/link_src/{{ item.item }}"
+
+  tasks:
+    - name: Adding artillery path (root of this repo) variable to zsh env
+      ansible.builtin.blockinfile:
+        path: "{{ lookup('env', 'HOME') ~ '/.zshenv' }}"
+        create: yes
+        block: |
+          export NONROOT_HOME={{ playbook_dir | dirname }}
+          export NONROOT_PREFIX=$NONROOT_HOME/env
+          export XDG_CACHE_HOME=$NONROOT_HOME/cache
+          export PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH
+
+    - name: Check if configs installed already
+      ansible.builtin.stat:
+        path: "{{ lookup('vars', 'current_config') }}"
+      loop: "{{ vars['configs'] }}"
+      register: config_check
+      ignore_errors: yes
+    
+    - name: Backing up current configs if not installed already
+      ansible.builtin.command:
+          mv -b "{{ item.invocation.module_args.path }}" "{{ item.invocation.module_args.path }}.bk"
+      when: > 
+        (item.stat.exists and item.stat.lnk_source is not defined)
+        or 
+        (item.stat.lnk_source is defined and item.stat.lnk_source != lookup('vars', 'source_config'))
+      loop: "{{ config_check['results'] }}"
+
+    # Considering using twpayne/chezmoi to manage dot files instead
+    - name: Adding preferred config
+      ansible.builtin.file:
+        path: "{{ item.invocation.module_args.path }}"
+        src: "{{ lookup('vars', 'source_config') }}"
+        state: "link"
+        mode: u=rwx,g=r,o=r
+      when: > 
+        item.stat.lnk_source is not defined
+        or
+        item.stat.lnk_source != lookup('vars', 'source_config')
+      loop: "{{ config_check['results'] }}"
+
+- name: Installing homebrew for linux as package manager, zplug as zsh manager
+  hosts: localhost
+  connection: local
+  tasks:
+    # The git version of homebrew is designed for Mac
+    # but it should work on Linux just fine
+    - name: Git clone homebrew
+      ansible.builtin.git:
+        repo: "https://github.com/Homebrew/brew"
+        dest: "{{ playbook_dir | dirname }}/env/homebrew"
+      register: homebrew_repo
+    
+    - name: Setting up homebrew
+      ansible.builtin.shell: >
+        eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)";
+        brew update --force --quiet;
+        chmod -R go-w "$(brew --prefix)/share/zsh"
+      when: homebrew_repo is changed
+
+    - name: Git clone zplug
+      ansible.builtin.git:
+        repo: "https://github.com/zplug/zplug.git"
+        dest: "{{ playbook_dir | dirname }}/env/zplug"
+  
+- name: Installing software
+  hosts: localhost
+  connection: local
+  vars:
+    brew:
+      - htop
+      - tmux
+      - fzf
+      - exa
+      # - zsh
+    appimage:
+      - {'name': 'wezt', 'url': 'https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-Ubuntu18.04.AppImage'}
+      - {'name': 'nvim', 'url': 'https://github.com/neovim/neovim/releases/latest/download/nvim.appimage'}
+  tasks:
+    - name: brew installs
+      ansible.builtin.shell: >
+        eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)"
+        brew install {{ item }}
+      loop: "{{ vars['brew'] }}"
+
+    - name: git clone nerd fonts
+      ansible.builtin.git:
+        repo: "https://github.com/ryanoasis/nerd-fonts.git"
+        dest: "{{ playbook_dir | dirname }}/env/fonts"
+        depth: 1
+    
+    - name: install Meslo fonts
+      ansible.builtin.shell: >
+        {{ playbook_dir | dirname }}/env/fonts/install.sh Meslo
+
+    - name: install fzf
+      ansible.builtin.shell: >
+        eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)";
+        $(brew --prefix)/opt/fzf/install
+    
+    - name: install Wezterm
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
+        mode: "u+rwx"
+      loop: "{{ vars['appimage'] }}"
+
+# not using chsh command because it needs root
+- name: Setting up shell
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Setting up bashrc
+      vars:
+        zsh_home: "{{ playbook_dir | dirname }}/env/bin/zsh"
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') ~ '/.bashrc' }}"
+        create: yes
+        line: "[ -f {{ lookup('vars', 'zsh_home') }} ] && exec {{ lookup('vars', 'zsh_home') }}"
