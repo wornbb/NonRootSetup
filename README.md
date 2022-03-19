@@ -31,6 +31,7 @@ so it will take quiet some time.
  - wget
  - gcc & g++
  - git
+ - curl
 
 Future development may even assume no or bare minimum dependencies.
 

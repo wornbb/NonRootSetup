@@ -9,7 +9,7 @@ PATH=$PWD/env/bin:$PATH
 
 if [[ ! -e $SetupHome/env/bin/conda ]]; then
     wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
-    /bin/bash Anaconda3-2021.11-Linux-x86_64.sh -p $SetupHome/env -b
+    /bin/bash Anaconda3-2021.11-Linux-x86_64.sh -u -p $SetupHome/env -b
     rm -rf Anaconda3-2021.11-Linux-x86_64.sh
     conda install -yc conda-forge ansible
 fi
