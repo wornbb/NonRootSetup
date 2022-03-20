@@ -32,6 +32,10 @@ so it will take quiet some time.
  - gcc & g++
  - git
  - curl
+ - texinfo
+
+Need to reduce those dependencies:
+autoconf automake autotools-dev libncurses-dev libncursesw5-dev libsigsegv2 m4 yodl
 
 Future development may even assume no or bare minimum dependencies.
 

@@ -80,13 +80,15 @@
 - name: Installing software
   hosts: localhost
   connection: local
+  environment:
+    PATH: "~/NonRootSetup/env/homebrew/sbin:~/NonRootSetup/env/homebrew/bin: {{ ansible_env.PATH }}"
   vars:
     brew:
       - htop
       - tmux
       - fzf
       - exa
-      # - zsh
+      - zsh
     appimage:
       - {'name': 'wezt', 'url': 'https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-Ubuntu18.04.AppImage'}
       - {'name': 'nvim', 'url': 'https://github.com/neovim/neovim/releases/latest/download/nvim.appimage'}
