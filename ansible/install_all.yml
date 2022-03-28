@@ -63,6 +63,7 @@
       ansible.builtin.git:
         repo: "https://github.com/Homebrew/brew"
         dest: "{{ playbook_dir | dirname }}/env/homebrew"
+        version: "master"
       register: homebrew_repo
     
     - name: Setting up homebrew
@@ -77,7 +78,7 @@
         repo: "https://github.com/zplug/zplug.git"
         dest: "{{ playbook_dir | dirname }}/env/zplug"
   
-- name: Installing software
+- name: Installing straight forward software
   hosts: localhost
   connection: local
   environment:
@@ -115,7 +116,7 @@
         eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)";
         $(brew --prefix)/opt/fzf/install
     
-    - name: install Wezterm
+    - name: install appimages
       ansible.builtin.get_url:
         url: "{{ item.url }}"
         dest: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
