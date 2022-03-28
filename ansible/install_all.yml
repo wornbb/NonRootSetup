@@ -1,6 +1,9 @@
-- name: Setting up config files
+- &common_play
+  name: Setting up config files
   hosts: localhost
   connection: local
+  environment:
+    PATH: "~/NonRootSetup/env/homebrew/sbin:~/NonRootSetup/env/homebrew/bin: {{ ansible_env.PATH }}"
   vars:
     # being absolutely explicit about what config to install
     configs:
@@ -12,7 +15,6 @@
       - vimrc
     current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
     source_config: "{{ playbook_dir | dirname }}/link_src/{{ item.item }}"
-
   tasks:
     - name: Adding artillery path (root of this repo) variable to zsh env
       ansible.builtin.blockinfile:
@@ -53,9 +55,8 @@
         item.stat.lnk_source != lookup('vars', 'source_config')
       loop: "{{ config_check['results'] }}"
 
-- name: Installing homebrew for linux as package manager, zplug as zsh manager
-  hosts: localhost
-  connection: local
+- <<: *common_play
+  name: Installing homebrew for linux as package manager, zplug as zsh manager
   tasks:
     # The git version of homebrew is designed for Mac
     # but it should work on Linux just fine
@@ -78,11 +79,8 @@
         repo: "https://github.com/zplug/zplug.git"
         dest: "{{ playbook_dir | dirname }}/env/zplug"
   
-- name: Installing straight forward software
-  hosts: localhost
-  connection: local
-  environment:
-    PATH: "~/NonRootSetup/env/homebrew/sbin:~/NonRootSetup/env/homebrew/bin: {{ ansible_env.PATH }}"
+- <<: *common_play
+  name: Installing straight forward software
   vars:
     brew:
       - htop
@@ -123,10 +121,42 @@
         mode: "u+rwx"
       loop: "{{ vars['appimage'] }}"
 
+- <<: *common_play
+  name: Installing compressed software
+  vars:
+    archives:
+      - {'fname': 'code.tar.gz', 'rpath': 'code', 'url': 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64'}
+  tasks:
+    - name: Downloading archives
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ playbook_dir | dirname }}/env/{{ item.fname }}"
+        mode: "u+rwx"
+      loop: "{{ vars['archives'] }}"
+
+    - name: Unzippping archives
+      ansible.builtin.unarchive:
+        src: "{{ playbook_dir | dirname }}/env/{{ item.fname }}"
+        dest: "{{ playbook_dir | dirname }}/env"
+        list_files: yes
+      loop: "{{ vars['archives'] }}"
+      register: unzipped
+
+    - name: linking
+      ansible.builtin.file:
+        path: "{{ playbook_dir | dirname }}/env/bin/{{ item.item.rpath | basename }}"
+        src: "{{ playbook_dir | dirname }}/env/{{ item.files[0] | dirname }}/{{ item.item.rpath }}"
+        state: "link"
+        mode: u=rwx,g=r,o=r
+      loop: "{{ unzipped['results'] }}"
+
+#- <<: *common_play
+#  name: Installing software needs manual compilation
+
+
 # not using chsh command because it needs root
-- name: Setting up shell
-  hosts: localhost
-  connection: local
+- <<: *common_play
+  name: Setting up shell
   tasks:
     - name: Setting up bashrc
       vars:
