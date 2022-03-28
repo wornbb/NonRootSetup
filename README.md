@@ -36,6 +36,10 @@ so it will take quiet some time.
 
 Need to reduce those dependencies:
 autoconf automake autotools-dev libncurses-dev libncursesw5-dev libsigsegv2 m4 yodl
+build-essential g++ 
+
+## needed if we are going to compile vscode
+libx11-dev libxkbfile-dev libsecret-1-dev python-is-python3
 
 Future development may even assume no or bare minimum dependencies.
 

@@ -150,9 +150,23 @@
         mode: u=rwx,g=r,o=r
       loop: "{{ unzipped['results'] }}"
 
-#- <<: *common_play
-#  name: Installing software needs manual compilation
+- <<: *common_play
+  name: Installing software needs manual compilation
+  vars:
+    repos:
+      - {'rpath': 'zsh', 'url': 'https://github.com/zsh-users/zsh.git', 'cmd': './Util/preconfig && ./configure --prefix={{ playbook_dir | dirname }}/env && make -j8 && make install'}
+  tasks:
+    - name: git clone repos
+      ansible.builtin.git:
+        repo: "{{ item.url }}"
+        dest: "{{ playbook_dir | dirname }}/env/{{ item.rpath }}"
+      loop: "{{ vars['repos'] }}"
 
+    - name: make and install
+      ansible.builtin.shell:
+        cmd: "{{ item.cmd }}"
+        chdir: "{{ playbook_dir | dirname }}/env/{{ item.rpath }}"
+      loop: "{{ lookup('vars', 'repos') }}"
 
 # not using chsh command because it needs root
 - <<: *common_play
