@@ -49,7 +49,8 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group ',' '.'
 # Alias
 alias vim=nvim
-alias ls='ls --color=auto'
+#alias ls='ls --color=auto'
+alias ls=exa
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
