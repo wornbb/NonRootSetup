@@ -7,11 +7,17 @@ fi
 SetupHome=$PWD
 PATH=$PWD/env/bin:$PATH
 
-if [[ ! -e $SetupHome/env/bin/conda ]]; then
-    wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
-    /bin/bash Anaconda3-2021.11-Linux-x86_64.sh -u -p $SetupHome/env -b
-    rm -rf Anaconda3-2021.11-Linux-x86_64.sh
-    conda install -yc conda-forge ansible
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    url=https://repo.anaconda.com/archive/Anaconda3-2021.11-MacOSX-x86_64.sh
+else
+    url=https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 fi
 
+script=anaconda.sh
+if [[ ! -e $SetupHome/env/bin/conda ]]; then
+    wget $url -O $script
+    /bin/bash $script -u -p $SetupHome/env -b
+    rm -rf $script
+    conda install -yc conda-forge ansible
+fi
 $SetupHome/env/bin/ansible-playbook $SetupHome/ansible/install_all.yml
