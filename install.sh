@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 if [[ ! -e install.sh ]]; then
     echo >&2 "Please cd into the repository before running this script."
     exit 1
