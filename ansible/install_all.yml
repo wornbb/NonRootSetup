@@ -158,12 +158,14 @@
         repo: "{{ item.url }}"
         dest: "{{ playbook_dir | dirname }}/env/{{ item.rpath }}"
       loop: "{{ vars['repos'] }}"
+      when: ansible_os_family != "Darwin"
 
     - name: make and install
       ansible.builtin.shell:
         cmd: "{{ item.cmd }}"
         chdir: "{{ playbook_dir | dirname }}/env/{{ item.rpath }}"
       loop: "{{ lookup('vars', 'repos') }}"
+      when: ansible_os_family != "Darwin"
 
 # not using chsh command because it needs root
 - <<: *common_play
