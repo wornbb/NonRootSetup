@@ -32,16 +32,14 @@
       loop: "{{ vars['configs'] }}"
       register: config_check
       ignore_errors: yes
-    
     - name: Backing up current configs if not installed already
       ansible.builtin.command:
           mv -b "{{ item.invocation.module_args.path }}" "{{ item.invocation.module_args.path }}.bk"
-      when: > 
+      when: >
         (item.stat.exists and item.stat.lnk_source is not defined)
-        or 
+        or
         (item.stat.lnk_source is defined and item.stat.lnk_source != lookup('vars', 'source_config'))
       loop: "{{ config_check['results'] }}"
-
     # Considering using twpayne/chezmoi to manage dot files instead
     - name: Adding preferred config
       ansible.builtin.file:
@@ -49,12 +47,11 @@
         src: "{{ lookup('vars', 'source_config') }}"
         state: "link"
         mode: u=rwx,g=r,o=r
-      when: > 
+      when: >
         item.stat.lnk_source is not defined
         or
         item.stat.lnk_source != lookup('vars', 'source_config')
       loop: "{{ config_check['results'] }}"
-
 - <<: *common_play
   name: Installing homebrew for linux as package manager, zplug as zsh manager
   tasks:
@@ -66,7 +63,6 @@
         dest: "{{ playbook_dir | dirname }}/env/homebrew"
         version: "master"
       register: homebrew_repo
-    
     - name: Setting up homebrew
       ansible.builtin.shell: >
         eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)";
@@ -78,7 +74,6 @@
       ansible.builtin.git:
         repo: "https://github.com/zplug/zplug.git"
         dest: "{{ playbook_dir | dirname }}/env/zplug"
-  
 - <<: *common_play
   name: Installing straight forward software
   vars:
@@ -104,16 +99,13 @@
         repo: "https://github.com/ryanoasis/nerd-fonts.git"
         dest: "{{ playbook_dir | dirname }}/env/fonts"
         depth: 1
-    
     - name: install Meslo fonts
       ansible.builtin.shell: >
         {{ playbook_dir | dirname }}/env/fonts/install.sh Meslo
-
     - name: install fzf
       ansible.builtin.shell: >
         eval "$({{ playbook_dir | dirname }}/env/homebrew/bin/brew shellenv)";
         $(brew --prefix)/opt/fzf/install
-    
     - name: install appimages
       ansible.builtin.get_url:
         url: "{{ item.url }}"
@@ -154,7 +146,12 @@
   name: Installing software needs manual compilation
   vars:
     repos:
-      - {'rpath': 'zsh', 'url': 'https://github.com/zsh-users/zsh.git', 'cmd': './Util/preconfig && ./configure --prefix={{ playbook_dir | dirname }}/env && make -j8 && make install'}
+      - |
+       {
+       'rpath': 'zsh',
+       'url': 'https://github.com/zsh-users/zsh.git',
+       'cmd': './Util/preconfig && ./configure --prefix={{ playbook_dir | dirname }}/env && make -j8 && make install'
+       }
   tasks:
     - name: git clone repos
       ansible.builtin.git:
