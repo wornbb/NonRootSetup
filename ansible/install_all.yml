@@ -186,6 +186,10 @@
       loop: "{{ lookup('vars', 'repos') }}"
       when: ansible_os_family != "Darwin"
 
+    - name: check installation
+      debug:
+        msg: ok
+
 # not using chsh command because it needs root
 - <<: *common_play
   name: Setting up shell
