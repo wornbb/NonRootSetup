@@ -2,16 +2,20 @@
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
 # Set up Homebrew
 eval "$($NONROOT_PREFIX/homebrew/bin/brew shellenv)"
+# Set up library and header paths
+export CFLAGS="-I$NONROOT_PREFIX/include"
+export CPPFLAGS="-I$NONROOT_PREFIX/include"
+export LDFLAGS="-L$NONROOT_PREFIX/lib"
 # init zsh plugin manager
 export ZPLUG_HOME=$NONROOT_PREFIX/zplug
 source $ZPLUG_HOME/init.zsh
 
 # ----- plugin config start ------
-#ZVM_VI_ESCAPE_BINDKEY=jk
 VIM_MODE_VICMD_KEY=jk
 MODE_CURSOR_VIINS="#00ff00 blinking bar"
 bindkey '^[[A' history-substring-search-up
@@ -56,6 +60,3 @@ alias ls=exa
 
 [ -f ~/.zshrc.bk ] && source ~/.zshrc.bk
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
-

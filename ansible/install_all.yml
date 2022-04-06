@@ -89,6 +89,7 @@
       - tmux
       - fzf
       - exa
+      - autoconf
         # disabed because texinfo cannot compile
         #      - zsh
     appimage:
