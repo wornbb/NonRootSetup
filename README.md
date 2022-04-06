@@ -1,5 +1,9 @@
 # NonRootSetup
 
+## Caveat
+
+Currently, although NonRootSetup can be cleanly uninstalled by deleting the local repository, it cannot revert to the pre-install state. It means that config files like `.zshrc` has to be manually restored from the backup copy created during installation.
+
 ## Goal
 
 Use this repo to set up your development environment on any Linux or Mac.
