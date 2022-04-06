@@ -166,7 +166,8 @@
   name: Installing software needs manual compilation
   vars:
     repos:
-      - rpath: 'zsh'
+      - name: 'zsh'
+        rpath: 'zsh'
         url: 'https://github.com/zsh-users/zsh.git'
         version: 'master'
         cmd: './Util/preconfig && ./configure --prefix={{ playbook_dir | dirname }}/env && make -j8 && make install'
@@ -187,8 +188,10 @@
       when: ansible_os_family != "Darwin"
 
     - name: check installation
-      debug:
-        msg: ok
+      ansible.builtin.stat:
+        path: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
+        register: result
+        failed_when: result.stat.exists == 0
 
 # not using chsh command because it needs root
 - <<: *common_play
