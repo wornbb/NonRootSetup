@@ -93,8 +93,10 @@
         # disabed because texinfo cannot compile
         #      - zsh
     appimage:
-      - {'name': 'wezt', 'url': 'https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-Ubuntu18.04.AppImage'}
-      - {'name': 'nvim', 'url': 'https://github.com/neovim/neovim/releases/latest/download/nvim.appimage'}
+      - name: 'wezt'
+        url: 'https://github.com/wez/wezterm/releases/download/nightly/WezTerm-nightly-Ubuntu18.04.AppImage'
+      - name: 'nvim'
+        url: 'https://github.com/neovim/neovim/releases/latest/download/nvim.appimage'
   tasks:
     - name: brew installs
       ansible.builtin.shell: >
@@ -133,7 +135,9 @@
   name: Installing compressed software
   vars:
     archives:
-      - {'fname': 'code.tar.gz', 'rpath': 'code', 'url': 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64'}
+      - fname: 'code.tar.gz'
+        rpath: 'code'
+        url: 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64'
   tasks:
     - name: Downloading archives
       ansible.builtin.get_url:
