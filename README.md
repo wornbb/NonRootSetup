@@ -18,14 +18,15 @@ To achieve above goals, all software must be compiled using homebrew
 so it will take quiet some time.
 
 ## Environment Contents
-	- Ansible
-	- Anaconda3/python3 
-	- fzf
-	- htop
-	- nvim
-	- nerd fonts
-	- tmux using zsh as default shell
-	- zsh with various plugins defined in configs/zshrc
+
+- Ansible
+- Anaconda3/python3 
+- fzf
+- htop
+- nvim
+- nerd fonts
+- tmux using zsh as default shell
+- zsh with various plugins defined in configs/zshrc
 
 ## Dependencies
  - bash
