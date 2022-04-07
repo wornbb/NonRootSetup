@@ -6,7 +6,8 @@ Currently, although NonRootSetup can be cleanly uninstalled by deleting the loca
 
 ## Goal
 
-Use this repo to set up your development environment on any Linux or Mac.
+Use this repo to set up a minimal development environment on any Linux or Mac. The intended use case is on a enterprise development machine where the machine already has most tools but lacks some personal touches.
+
 NonRootSetup trades the installation speed for:
 	1. platform independency, so that you are worry free
 	2. exemption from root privilege, so that you are not blocked by your sys admin
@@ -21,13 +22,9 @@ so it will take quiet some time.
 	- Anaconda3/python3 
 	- fzf
 	- htop
-	- mysql & nosql
-	- nodejs with yarn
 	- nvim
 	- nerd fonts
 	- tmux using zsh as default shell
-	- vscode
-	- WezTerm
 	- zsh with various plugins defined in configs/zshrc
 
 ## Dependencies
@@ -41,9 +38,4 @@ so it will take quiet some time.
 Need to reduce those dependencies:
 automake autotools-dev libncurses-dev libncursesw5-dev libsigsegv2 m4 yodl
 build-essential g++ 
-
-## needed if we are going to compile vscode
-libx11-dev libxkbfile-dev libsecret-1-dev python-is-python3
-
-Future development may even assume no or bare minimum dependencies.
 
