@@ -192,6 +192,7 @@
         path: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
         register: result
         failed_when: result.stat.exists == 0
+      loop: "{{ vars['repos'] }}"
 
 # not using chsh command because it needs root
 - <<: *common_play
