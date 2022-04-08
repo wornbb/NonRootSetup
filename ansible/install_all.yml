@@ -25,7 +25,7 @@
           export NONROOT_HOME={{ playbook_dir | dirname }}
           export NONROOT_PREFIX=$NONROOT_HOME/env
           export XDG_CACHE_HOME=$NONROOT_HOME/cache
-          export PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH
+          export PATH=$PATH:$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin
 
     - name: Check if configs installed already
       ansible.builtin.stat:
@@ -190,8 +190,8 @@
     - name: check installation
       ansible.builtin.stat:
         path: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
-        register: result
-        failed_when: result.stat.exists == 0
+      register: result
+      failed_when: result.stat.exists == 0
       loop: "{{ vars['repos'] }}"
 
 # not using chsh command because it needs root
