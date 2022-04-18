@@ -6,12 +6,90 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 set rtp+=/home/yishen/NonRootSetup/env/homebrew/bin/fzf
 call plug#begin()
+" UI
+Plug 'mhinz/vim-startify'
+Plug 'sei40kr/SpaceVim-onedark'
+Plug 'vim-airline/vim-airline'
+"Plug 'preservim/tagbar'
+"Plug 'tenfyzhong/tagbar-proto.vim'
+" Editing
+Plug 'preservim/nerdcommenter', {'on': ['<Plug>NERDCommenterToggle']}
+Plug 'itchyny/vim-cursorword'
 Plug 'ackyshake/VimCompletesMe'
+Plug 'junegunn/vim-easy-align', {'on': ['<Plug>(EasyAlign)']}
+Plug 'rhysd/clever-f.vim'
+" Utility
 Plug '$NONROOT_PREFIX/homebrew/opt/fzf'
+Plug 'voldikss/vim-floaterm', {'on': ['FloatermToggle', 'FloatermToggle']}
 Plug 'junegunn/fzf.vim'
+Plug 't9md/vim-choosewin'
 call plug#end()
 " Run PlugInstall if there are missing plugins
 autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
   \| PlugInstall --sync | source $MYVIMRC
 \| endif
+
+" General Configurations
+set number
+imap jk <Esc>
+set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:·
+set list
+filetype plugin on
+autocmd FileType vim setlocal ts=2 sts=2 sw=2
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2
+autocmd FileType python setlocal ts=4 sts=4 sw=4
+setl smartindent
+setl expandtab
+
+" Plugin Configurations
+"
+" OneDark Theme
+syntax on
+colorscheme onedark
+
+" vim-floaterm
+let g:floaterm_width         = 0.8
+let g:floaterm_height        = 0.8
+nnoremap <silent> <Space>tN :FloatermNew<CR>
+tnoremap <silent> <Space>tN <C-\><C-n>:FloatermNew<CR>
+nnoremap <silent> <Space>tp :FloatermPrev<CR>
+tnoremap <silent> <Space>tp <C-\><C-n>:FloatermPrev<CR>
+nnoremap <silent> <Space>tn :FloatermNext<CR>
+tnoremap <silent> <Space>tn <C-\><C-n>:FloatermNext<CR>
+nnoremap <silent> <Space>tt :FloatermToggle<CR>
+tnoremap <silent> <Space>tt <C-\><C-n>:FloatermToggle<CR>
+
+" vim-easy-align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap <Space>a <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap <Space>a <Plug>(EasyAlign)
+
+" nerdcommenter
+map <Space>c <Plug>NERDCommenterToggle
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines    = 1
+
+" choosewin
+let g:choosewin_label_fill = 1
+let g:airline#extensions#tabline#enabled = 1
+
+" airline
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+"powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.colnr = ' :'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ' :'
+let g:airline_symbols.maxlinenr = '☰ '
+let g:airline_symbols.dirty='⚡'
 
