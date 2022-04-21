@@ -25,7 +25,7 @@
           export NONROOT_HOME={{ playbook_dir | dirname }}
           export NONROOT_PREFIX=$NONROOT_HOME/env
           export XDG_CACHE_HOME=$NONROOT_HOME/cache
-          export PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH
+          export PATH=$PATH:$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin
 
     - name: Check if configs installed already
       ansible.builtin.stat:
@@ -166,7 +166,8 @@
   name: Installing software needs manual compilation
   vars:
     repos:
-      - rpath: 'zsh'
+      - name: 'zsh'
+        rpath: 'zsh'
         url: 'https://github.com/zsh-users/zsh.git'
         version: 'master'
         cmd: './Util/preconfig && ./configure --prefix={{ playbook_dir | dirname }}/env && make -j8 && make install'
@@ -185,6 +186,13 @@
         chdir: "{{ playbook_dir | dirname }}/env/{{ item.rpath }}"
       loop: "{{ lookup('vars', 'repos') }}"
       when: ansible_os_family != "Darwin"
+
+    - name: check installation
+      ansible.builtin.stat:
+        path: "{{ playbook_dir | dirname }}/env/bin/{{ item.name }}"
+      register: result
+      failed_when: result.stat.exists == 0
+      loop: "{{ vars['repos'] }}"
 
 # not using chsh command because it needs root
 - <<: *common_play
