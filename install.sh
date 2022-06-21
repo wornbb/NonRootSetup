@@ -22,7 +22,6 @@ if [[ ! -e $SetupHome/env/bin/conda ]]; then
     $DL $url $flag $script
     /bin/bash $script -u -p $SetupHome/env -b
     rm -rf $script
-    codna install -yc conda-forge/label/cf202003 ansible
-    conda install -yc conda-forge/label/main ansible-lint
+    conda install -yc conda-forge/label/cf202003 ansible ansible-lint
 fi
 $SetupHome/env/bin/ansible-playbook $SetupHome/ansible/install_all.yml
