@@ -8,11 +8,11 @@ SetupHome=$PWD
 PATH=$PWD/env/bin:$PATH
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    url=https://repo.anaconda.com/archive/Anaconda3-2021.11-MacOSX-x86_64.sh
+    url=https://repo.anaconda.com/archive/Anaconda3-2022.05-MacOSX-x86_64.sh
     DL="curl"
     flag="-o"
 else
-    url=https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
+    url=https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
     DL="wget"
     flag="-O"
 fi
