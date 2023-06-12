@@ -1,23 +1,41 @@
-- ansible.builtin.debug:
-    msg:
-      # - "{{ lookup('vars', 'git_repo') }}"
-      -  "{{ item | basename | splitext | first }}"
-
 - ansible.builtin.include_tasks: 'set_common_path.yml'
 
 - name: Find repo path
   set_fact:
     repo_dir: "{{ proj_root }}/env/{{ item | basename | splitext | first }}"
 
-- name: git clone repos
+- name: "Git clone {{ repo_dir }}"
   ansible.builtin.git:
     repo: "{{ item }}"
     dest: "{{proj_root }}/env/{{ item | basename | splitext | first }}"
-    clone: false
+  ignore_errors: true
+
+- name: preconfigure
+  ansible.builtin.command:
+    cmd: './bootstrap'
+    chdir: "{{ repo_dir }}"
+  ignore_errors: true
+
+- name: preconfigure
+  ansible.builtin.command:
+    cmd: './Util/preconfig'
+    chdir: "{{ repo_dir }}"
+  ignore_errors: true
+
+- name: configure
+  ansible.builtin.command:
+    cmd: './configure --prefix={{ proj_root }}/env'
+    chdir: "{{ repo_dir }}"
+  ignore_errors: true
+
+- name: make
+  ansible.builtin.command:
+    cmd: 'make -j`nproc`'
+    chdir: "{{ repo_dir }}"
   ignore_errors: true
 
 - name: make and install
   ansible.builtin.command:
-    cmd: './Util/preconfig ; ./configure --prefix={{proj_root }}/env && make -j`nproc` && make install'
+    cmd: 'make install'
     chdir: "{{ repo_dir }}"
   ignore_errors: true

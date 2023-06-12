@@ -1,4 +1,0 @@
-2022-06-14 15:01:35,108 DEBUG:                    rhost: [localhost]: RUNCMD: Host: localhost cmd: bash -c 'cd /nobackup/yishe2/NonRootSetup/ansible && (mkdir -p  /nobackup/yishe2/NonRootSetup/ansible/xrut/hosts)': output:  error: 
-2022-06-14 15:01:35,114 DEBUG:                    rhost: [localhost]: RUNCMD: Host: localhost cmd: bash -c 'cd /nobackup/yishe2/NonRootSetup/ansible && (rm -rf xrut/hosts)': output:  error: 
-2022-06-14 15:01:35,119 DEBUG:                    rhost: [localhost]: RUNCMD: Host: localhost cmd: bash -c 'cd /nobackup/yishe2/NonRootSetup/ansible && (mkdir -p  /nobackup/yishe2/NonRootSetup/ansible/xrut/hosts)': output:  error: 
-2022-06-14 15:01:35,123 DEBUG:                    rhost: [localhost]: RUNCMD: Host: localhost cmd: bash -c 'cd /nobackup/yishe2/NonRootSetup/ansible && (rm -f xrut/sim_dir.txt)': output:  error: 

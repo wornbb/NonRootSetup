@@ -1,6 +1,6 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 #zmodload zsh/zprof
-export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
+#export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -30,10 +30,7 @@ zplug "softmoth/zsh-vim-mode"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+    echo; zplug install
 fi
 
 # Then, source plugins and add commands to $PATH

@@ -6,6 +6,8 @@
   vars:
     git_repo:
       - 'http://git.sv.gnu.org/r/autoconf.git'
+      # sudo apt-get install texinfo (makeinfo)
+      # help2man
 
   tasks:
     - ansible.builtin.include_tasks: 'tasks_install_from_git.yml'
