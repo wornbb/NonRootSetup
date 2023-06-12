@@ -1,0 +1,53 @@
+- hosts: localhost
+  name: Setting up config files
+  connection: local
+  vars:
+    # being absolutely explicit about what config to install
+    configs:
+      - zshrc
+      - p10k.zsh
+      - wezterm.lua
+      - vscode-server
+      - vscode
+    current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
+    source_config: "{{ playbook_dir | dirname }}/link_src/{{ item.item }}"
+  tasks:
+    - name: Adding artillery path (root of this repo) variable to zsh env
+      ansible.builtin.blockinfile:
+        path: "{{ lookup('env', 'HOME') ~ '/.profile' }}"
+        create: true
+        mode: 0644
+        block: |
+          NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
+          NONROOT_PREFIX=$NONROOT_HOME/env;export NONROOT_PREFIX
+          XDG_CACHE_HOME=$NONROOT_HOME/cache;export XDG_CACHE_HOME
+          PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH;export PATH
+
+    - name: Check if configs installed already
+      ansible.builtin.stat:
+        path: "{{ lookup('vars', 'current_config') }}"
+      loop: "{{ vars['configs'] }}"
+      register: config_check
+      ignore_errors: true
+
+    - name: Backing up current configs if not installed already
+      ansible.builtin.command:
+        mv -b "{{ item.invocation.module_args.path }}" "{{ item.invocation.module_args.path }}.bk"
+      when: >
+        (item.stat.exists and item.stat.lnk_source is not defined)
+        or
+        (item.stat.lnk_source is defined and item.stat.lnk_source != lookup('vars', 'source_config'))
+      loop: "{{ config_check['results'] }}"
+
+    # Considering using twpayne/chezmoi to manage dot files instead
+    - name: Adding preferred config
+      ansible.builtin.file:
+        path: "{{ item.invocation.module_args.path }}"
+        src: "{{ lookup('vars', 'source_config') }}"
+        state: "link"
+        mode: u=rwx,g=r,o=r
+      when: >
+        item.stat.lnk_source is not defined
+        or
+        item.stat.lnk_source != lookup('vars', 'source_config')
+      loop: "{{ config_check['results'] }}"

@@ -1,0 +1,12 @@
+- hosts: localhost
+  connection: local
+  environment:
+    PATH: "~/NonRootSetup/env/homebrew/sbin:~/NonRootSetup/env/homebrew/bin: {{ ansible_env.PATH }}"
+  name: Installing straight forward software
+  vars:
+    git_repo:
+      - 'http://git.sv.gnu.org/r/autoconf.git'
+
+  tasks:
+    - ansible.builtin.include_tasks: 'tasks_install_from_git.yml'
+      loop: "{{ vars['git_repo'] }}"

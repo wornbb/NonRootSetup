@@ -1,0 +1,1 @@
+2022-06-14 15:01:11,002 ERROR:                     xrut: No workspace and no images specified, please specify --default-type

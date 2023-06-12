@@ -1,0 +1,1 @@
+2022-06-14 15:01:11,002 ERROR: [MainThread                      xrut:       set_default_router_type:2298    (unknown selfarg)]: No workspace and no images specified, please specify --default-type
