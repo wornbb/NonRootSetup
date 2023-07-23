@@ -21,8 +21,8 @@ if [[ ! -e $SetupHome/env/bin/conda ]]; then
     conda install -yc anaconda jinja2
     conda install -yc conda-forge/label/main ansible ansible-lint
 fi
-$SetupHome/env/bin/ansible-playbook $SetupHome/ansible/install_all.yml
+$SetupHome/env/bin/ansible-playbook $SetupHome/installers/setup_configs.yml
 
 source ~/.profile
-./ansible/install_util.py
+./installers/install_util.py
 source ~/.zshrc
