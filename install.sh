@@ -23,6 +23,6 @@ if [[ ! -e $SetupHome/env/bin/conda ]]; then
 fi
 $SetupHome/env/bin/ansible-playbook $SetupHome/installers/setup_configs.yml
 
-source ~/.profile
-./installers/install_util.py
-source ~/.zshrc
+source ~/.zprofile
+python3 ./installers/install_util.py
+# source ~/.zshrc
