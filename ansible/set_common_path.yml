@@ -1,3 +1,0 @@
-- name: Find NonRootSetup root path
-  set_fact:
-    proj_root: "{{ playbook_dir | dirname }}"

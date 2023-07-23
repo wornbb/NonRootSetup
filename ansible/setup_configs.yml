@@ -12,7 +12,7 @@
     current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
     source_config: "{{ playbook_dir | dirname }}/link_src/{{ item.item }}"
   tasks:
-    - name: Adding artillery path (root of this repo) variable to zsh env
+    - name: Adding artillery path (root of this repo) variable to bash env
       ansible.builtin.blockinfile:
         path: "{{ lookup('env', 'HOME') ~ '/.profile' }}"
         create: true
@@ -21,6 +21,20 @@
           NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
           NONROOT_PREFIX=$NONROOT_HOME/env;export NONROOT_PREFIX
           XDG_CACHE_HOME=$NONROOT_HOME/cache;export XDG_CACHE_HOME
+          XDG_DATA_HOME=$NONROOT_HOME/data;export XDG_DATA_HOME
+          ZPLUG_HOME=$NONROOT_HOME/env/zplug; export ZPLUG_HOME
+          PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH;export PATH
+    - name: Adding artillery path (root of this repo) variable to zsh env
+      ansible.builtin.blockinfile:
+        path: "{{ lookup('env', 'HOME') ~ '/.zprofile' }}"
+        create: true
+        mode: 0644
+        block: |
+          NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
+          NONROOT_PREFIX=$NONROOT_HOME/env;export NONROOT_PREFIX
+          XDG_CACHE_HOME=$NONROOT_HOME/cache;export XDG_CACHE_HOME
+          XDG_DATA_HOME=$NONROOT_HOME/data;export XDG_DATA_HOME
+          ZPLUG_HOME=$NONROOT_HOME/env/zplug; export ZPLUG_HOME
           PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH;export PATH
 
     - name: Check if configs installed already

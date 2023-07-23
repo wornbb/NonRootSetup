@@ -8,7 +8,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-source ~/.zplug/init.zsh
+source $ZPLUG_HOME/init.zsh
 
 # ----- plugin config start ------
 #ZVM_VI_ESCAPE_BINDKEY=jk
@@ -36,7 +36,6 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
-source ~/.zshrc.pre-oh-my-zsh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 alias rl="readlink -f"
 function precommit {
