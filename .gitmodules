@@ -1,6 +1,3 @@
 [submodule "apps/zplug"]
 	path = apps/zplug
 	url = https://github.com/zplug/zplug.git
-[submodule "apps/homebrew"]
-	path = apps/homebrew
-	url = https://github.com/Homebrew/brew
