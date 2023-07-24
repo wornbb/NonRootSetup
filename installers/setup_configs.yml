@@ -6,7 +6,6 @@
     configs:
       - zshrc
       - p10k.zsh
-      - wezterm.lua
       - vscode-server
       - vscode
     current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
