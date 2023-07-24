@@ -7,7 +7,6 @@ import requests
 import stat
 
 
-
 class InstallUtil:
     def __init__(self, debug=False, log=True, dry=False) -> None:
         self.debug = debug
@@ -28,13 +27,13 @@ class InstallUtil:
             os.chdir(cwd)
 
     def get_clone_path(self, url):
-        name = os.path.basename(url).split('.')[0]
-        return os.path.join(self.nrs_root, 'env', name)
+        name = os.path.basename(url).split(".")[0]
+        return os.path.join(self.nrs_root, "env", name)
 
     def exec_shell(self, cmd):
         output = None
         if self.log:
-            logging.info(f'Executing Command \"{cmd}\" in shell, at {os.getcwd()}')
+            logging.info(f'Executing Command "{cmd}" in shell, at {os.getcwd()}')
         # Set breakpoint before potential exception
         if self.debug:
             pdb.set_trace()
@@ -44,19 +43,19 @@ class InstallUtil:
 
     def git_clone(self, url, dest):
         if os.path.exists(dest):
-            cmd = f'git pull'
+            cmd = "git pull"
             with self.dir_context(dest):
                 return self.exec_shell(cmd)
         else:
-            cmd = f'git clone {url} {dest}'
+            cmd = f"git clone {url} {dest}"
             return self.exec_shell(cmd)
 
-    def bootstrap(self, wd, cmd='./bootstrap'):
+    def bootstrap(self, wd, cmd="./bootstrap"):
         with self.dir_context(wd):
             return self.exec_shell(cmd)
 
     def preconfig(self, wd):
-        cmd = './Util/preconfig'
+        cmd = "./Util/preconfig"
         with self.dir_context(wd):
             return self.exec_shell(cmd)
 
@@ -66,12 +65,12 @@ class InstallUtil:
             return self.exec_shell(cmd)
 
     def make(self, wd):
-        cmd = 'make -j`nproc`'
+        cmd = "make -j`nproc`"
         with self.dir_context(wd):
             return self.exec_shell(cmd)
 
     def make_install(self, wd):
-        cmd = 'make install'
+        cmd = "make install"
         with self.dir_context(wd):
             return self.exec_shell(cmd)
 
@@ -84,30 +83,34 @@ class InstallUtil:
         else:
             if os.path.exists(dest):
                 import shutil
+
                 shutil.rmtree(dest)
         os.symlink(src, dest)
 
     def wget(self, url, dest):
         r = requests.get(url)
-        open(dest , 'wb').write(r.content)
+        open(dest, "wb").write(r.content)
         os.chmod(dest, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
 
 def installer(f, *args, **kwargs):
     def install(*args, **kwargs):
-        logging.info(f'Installing {f.__name__}')
+        logging.info(f"Installing {f.__name__}")
         try:
             f(*args, **kwargs)
         except Exception as inst:
-            logging.error(f'{f.__name__} install failed')
+            logging.error(f"{f.__name__} install failed")
             print(inst)
-        logging.info(f'{f.__name__} success')
+        logging.info(f"{f.__name__} success")
+
     return install
+
 
 def standard_clone(url):
     repo_dir = util.get_clone_path(url)
     util.git_clone(url, repo_dir)
     return repo_dir
+
 
 def standard_build(util, wd):
     util.configure(wd)
@@ -117,53 +120,63 @@ def standard_build(util, wd):
 
 @installer
 def autoconf(util: InstallUtil):
-    repo_dir = standard_clone('http://git.sv.gnu.org/r/autoconf.git')
+    repo_dir = standard_clone("http://git.sv.gnu.org/r/autoconf.git")
     util.bootstrap(repo_dir)
     standard_build(util, repo_dir)
 
+
 @installer
 def zplug(util: InstallUtil):
-    repo_dir = standard_clone('https://github.com/zplug/zplug.git')
+    standard_clone("https://github.com/zplug/zplug.git")
+
 
 @installer
 def neovim(util: InstallUtil):
-    url = 'https://github.com/neovim/neovim/releases/latest/download/nvim.appimage'
+    url = "https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
     repo_dir = util.get_clone_path(url)
     util.wget(url, repo_dir)
-    util.link(repo_dir, f'{util.nrs_root}/env/bin/nvim')
+    util.link(repo_dir, f"{util.nrs_root}/env/bin/nvim")
+
 
 @installer
 def lazyvim(util: InstallUtil):
-    repo_dir = standard_clone('https://github.com/LazyVim/starter')
-    util.link(repo_dir, os.path.expanduser("~")+"/.config/nvim")
+    # repo_dir = standard_clone("https://github.com/LazyVim/starter")
+    repo_dir = util.nrs_root + "/env/nvim"
+    util.link(repo_dir, os.path.expanduser("~") + "/.config/nvim")
+
 
 @installer
 def nerd_fonts(util: InstallUtil):
-    repo_dir = standard_clone('https://github.com/ryanoasis/nerd-fonts.git')
-    util.exec_shell(f'{repo_dir}/install.sh Meslo')
+    repo_dir = standard_clone("https://github.com/ryanoasis/nerd-fonts.git")
+    util.exec_shell(f"{repo_dir}/install.sh Meslo")
+
 
 @installer
 def htop(util: InstallUtil):
-    repo_dir = standard_clone('https://github.com/htop-dev/htop.git')
-    util.bootstrap(repo_dir, './autogen.sh')
+    repo_dir = standard_clone("https://github.com/htop-dev/htop.git")
+    util.bootstrap(repo_dir, "./autogen.sh")
     standard_build(util, repo_dir)
+
 
 @installer
 def fzf(util: InstallUtil):
-    repo_dir = standard_clone('https://github.com/junegunn/fzf.git')
-    util.link(repo_dir, os.path.expanduser("~")+"/.fzf")
-    util.exec_shell(f'{repo_dir}/install --all')
-
+    repo_dir = standard_clone("https://github.com/junegunn/fzf.git")
+    util.link(repo_dir, os.path.expanduser("~") + "/.fzf")
+    util.exec_shell(f"{repo_dir}/install --all")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+    logging.basicConfig(
+        format="%(asctime)s %(message)s",
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+        level=logging.INFO,
+    )
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--debug', dest='debug', action='store_true')
-    parser.add_argument('-l', '--log', dest='log', action='store_true')
-    parser.add_argument('-t', '--dry', dest='dry', action='store_true')
+    parser.add_argument("-d", "--debug", dest="debug", action="store_true")
+    parser.add_argument("-l", "--log", dest="log", action="store_true")
+    parser.add_argument("-t", "--dry", dest="dry", action="store_true")
 
     args = parser.parse_args()
     util = InstallUtil(debug=args.debug, log=args.log, dry=args.dry)
@@ -175,4 +188,3 @@ if __name__ == "__main__":
     lazyvim(util)
     nerd_fonts(util)
     fzf(util)
-
