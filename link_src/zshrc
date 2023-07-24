@@ -3,12 +3,22 @@
 #export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
+export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# Set up Homebrew
+# eval "$($NONROOT_PREFIX/homebrew/bin/brew shellenv)"
+# Set up library and header paths
+#export CFLAGS="-I$NONROOT_PREFIX/include"
+#export CPPFLAGS="-I$NONROOT_PREFIX/include"
+#export LDFLAGS="-L$NONROOT_PREFIX/lib"
+# init zsh plugin manager
+export ZPLUG_HOME=~/.zplug
 source $ZPLUG_HOME/init.zsh
+export PATH=/usr/share/Modules/bin:/router/bin::/usr/cisco/bin:/usr/cisco/etc:/bin:/usr/X11R6/bin:/usr/sbin:/sbin:/usr/bin:.:/usr/local/sbin:/opt/puppetlabs/bin:/users/yishe2/.fzf/bin:/router/bin
 
 # ----- plugin config start ------
 #ZVM_VI_ESCAPE_BINDKEY=jk
@@ -48,7 +58,22 @@ function precommit {
                 echo "Cannot find ddts from branch name ${branch}"
         fi
 }
-
+# Styling
+export LS_COLORS='rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:'
+# disable sort when completing `git checkout`
+#zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+#zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+#zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# preview directory's content with exa when completing cd
+#zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# switch group using `,` and `.`
+#zstyle ':fzf-tab:*' switch-group ',' '.'
+# Alias
+#alias vim=nvim
+#alias ls='ls --color=auto'
+#alias ls=exa
 alias un_tgz="tar -xvzf"
 alias un_gz="gzip -d"
 alias fetch_repo="cd ${fea}; git fetch; cd-"
@@ -56,8 +81,9 @@ alias super_clean="lcleanup --killprocs;lcleanup --unmount;lcleanup --mqueues;lc
 #alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp lib infra sysdb sys platforms common linux inc manageability"
 alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp sysdb manageability"
 alias find_git_base="git merge-base origin/main HEAD"
+alias precommit="/auto/firex/bin/precommit"
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
