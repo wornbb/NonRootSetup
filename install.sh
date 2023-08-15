@@ -13,11 +13,12 @@ else
     url=https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh
 fi
 
-script=anaconda.sh
-if [[ ! -e $SetupHome/env/bin/conda ]]; then
+script=$SetupHome/env/anaconda.sh
+# if [[ ! -e $SetupHome/env/bin/conda ]]; then
+if [[ ! -e $script ]]; then
     wget $url -O $script
     /bin/bash $script -u -p $SetupHome/env -b
-    rm -rf $script
+    # rm -rf $script
     conda install -yc anaconda jinja2
     conda install -yc conda-forge/label/main ansible ansible-lint
 fi
