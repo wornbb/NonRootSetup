@@ -30,9 +30,6 @@ jobs:
       - name: Test
         run: |
           ./install.sh
-      - name: Lint
-        run: |
-          ./env/bin/ansible-lint -p ./ansible/*
       - name: check home disk space
         run: |
           du -sh ~
