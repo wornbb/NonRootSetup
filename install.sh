@@ -13,6 +13,7 @@ PYTHON_HOME="$SetupHome"/env/yienv3
 python3 -m venv --system-site-packages "$PYTHON_HOME"
 source "$PYTHON_HOME"/bin/activate
 ansible-playbook "$SetupHome"/installers/setup_configs.yml
+pip install -r requirement.txt
 
 
 source ~/.zprofile
