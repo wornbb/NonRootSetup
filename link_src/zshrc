@@ -9,6 +9,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+NONROOT_PREFIX=$NONROOT_HOME/env;export NONROOT_PREFIX
+ZPLUG_HOME=$NONROOT_HOME/env/zplug; export ZPLUG_HOME
+PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH;export PATH
+
+XDG_CACHE_HOME=$STATIC_DIR/cache;export XDG_CACHE_HOME
+XDG_DATA_HOME=$STATIC_DIR/data;export XDG_DATA_HOME
 # Set up Homebrew
 # eval "$($NONROOT_PREFIX/homebrew/bin/brew shellenv)"
 # Set up library and header paths

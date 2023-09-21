@@ -1,0 +1,6 @@
+jinja2
+ansible
+ansible-lint
+pandas
+lxml
+requests
