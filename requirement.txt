@@ -3,3 +3,4 @@ ansible
 ansible-lint
 pandas
 lxml
+requests
