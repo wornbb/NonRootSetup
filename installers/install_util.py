@@ -30,7 +30,7 @@ class InstallUtil:
         name = os.path.basename(url).split(".")[0]
         return os.path.join(self.nrs_root, "env", name)
 
-    def exec_shell(self, cmd):
+    def exec_shell(self, cmd, wd=None):
         output = None
         if self.log:
             logging.info(f'Executing Command "{cmd}" in shell, at {os.getcwd()}')
@@ -38,7 +38,11 @@ class InstallUtil:
         if self.debug:
             pdb.set_trace()
         if not self.dry:
-            output = subprocess.check_output(cmd, shell=True)
+            if wd:
+                with self.dir_context(wd):
+                    output = subprocess.check_output(cmd, shell=True)
+            else:
+                output = subprocess.check_output(cmd, shell=True)
         return output
 
     def git_clone(self, url, dest):
@@ -98,10 +102,10 @@ def installer(f, *args, **kwargs):
         logging.info(f"Installing {f.__name__}")
         try:
             f(*args, **kwargs)
+            logging.info(f"{f.__name__} success")
         except Exception as inst:
             logging.error(f"{f.__name__} install failed")
             print(inst)
-        logging.info(f"{f.__name__} success")
 
     return install
 
@@ -122,7 +126,7 @@ def help2man(util: InstallUtil):
     url = "http://mirrors.ocf.berkeley.edu/gnu/help2man/help2man-1.49.3.tar.xz"
     dl_path = os.path.join(util.nrs_root, "env", os.path.basename(url))
     util.wget(url, dl_path)
-    util.exec_shell(f'tar -xf {dl_path}')
+    util.exec_shell(f'tar -xf {dl_path}', util.nrs_root + "/env")
     repo_dir = os.path.join(util.nrs_root, "env", "help2man-1.49.3")
     standard_build(util, repo_dir)
 
