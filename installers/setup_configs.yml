@@ -21,7 +21,7 @@
         mode: 0644
         block: |
           NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
-          PATH=$NONROOT_HOME/env/bin; export PATH
+          PATH=$NONROOT_HOME/env/bin:$PATH; export PATH
           if lsb_release -i | grep 'RedHat'
           then
             STATIC_DIR=/nobackup/yishe2;export STATIC_DIR
