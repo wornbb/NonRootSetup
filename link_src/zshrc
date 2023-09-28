@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 #zmodload zsh/zprof
 #export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
