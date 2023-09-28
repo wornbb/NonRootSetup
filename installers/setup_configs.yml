@@ -8,26 +8,27 @@
       - p10k.zsh
       - wezterm.lua
       - vscode-server
-      - vscode
+    paths:
+        - .profile
+        - .zprofile
     current_config: "{{ lookup('env', 'HOME') }}/.{{ item }}"
     source_config: "{{ playbook_dir | dirname }}/link_src/{{ item.item }}"
   tasks:
     - name: Adding artillery path (root of this repo) variable to bash env
-      ansible.builtin.blockinfile:
-        path: "{{ lookup('env', 'HOME') ~ '/.profile' }}"
+      blockinfile:
+        path: "{{ lookup('env', 'HOME') }}/{{ item  }}"
         create: true
         mode: 0644
         block: |
           NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
-          STATIC_DIR=/nobackup/yishe2;export STATIC_DIR
-    - name: Adding artillery path (root of this repo) variable to zsh env
-      ansible.builtin.blockinfile:
-        path: "{{ lookup('env', 'HOME') ~ '/.zprofile' }}"
-        create: true
-        mode: 0644
-        block: |
-          NONROOT_HOME={{ playbook_dir | dirname }};export NONROOT_HOME
-          STATIC_DIR=/nobackup/yishe2;export STATIC_DIR
+          PATH=$NONROOT_HOME/env/bin:$PATH; export PATH
+          if lsb_release -i | grep 'RedHat'
+          then
+            STATIC_DIR=/nobackup/yishe2;export STATIC_DIR
+          else
+            STATIC_DIR=$NONROOT_HOME;export STATIC_DIR
+          fi
+      loop: "{{ vars['paths'] }}"
 
     - name: Check if configs installed already
       ansible.builtin.stat:
@@ -35,16 +36,19 @@
       loop: "{{ vars['configs'] }}"
       register: config_check
       ignore_errors: true
-
-    - name: Backing up current configs if not installed already
+    - name: unlink
       ansible.builtin.command:
-        mv -b "{{ item.invocation.module_args.path }}" "{{ item.invocation.module_args.path }}.bk"
+        unlink "{{ item.invocation.module_args.path }}"
       when: >
-        (item.stat.exists and item.stat.lnk_source is not defined)
-        or
         (item.stat.lnk_source is defined and item.stat.lnk_source != lookup('vars', 'source_config'))
       loop: "{{ config_check['results'] }}"
 
+    - name: Backing up current configs if not installed already
+      command:
+        mv -b "{{ item.invocation.module_args.path }}" "{{ item.invocation.module_args.path }}.bk"
+      when: >
+        (item.stat.exists and item.stat.lnk_source is not defined)
+      loop: "{{ config_check['results'] }}"
     # Considering using twpayne/chezmoi to manage dot files instead
     - name: Adding preferred config
       ansible.builtin.file:

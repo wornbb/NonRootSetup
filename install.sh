@@ -8,14 +8,16 @@ fi
 
 SetupHome=$PWD
 PATH=$PWD/env/bin:$PATH
+rm -rf "$PWD"/env/*
 
 PYTHON_HOME="$SetupHome"/env/yienv3
-python3 -m venv --system-site-packages "$PYTHON_HOME"
+/bin/python3 -m venv "$PYTHON_HOME"
 source "$PYTHON_HOME"/bin/activate
+pip3 install --upgrade pip
+pip3 install -r requirement.txt
 ansible-playbook "$SetupHome"/installers/setup_configs.yml
-pip install -r requirement.txt
 
 
 source ~/.zprofile
 python3 ./installers/install_util.py
-# source ~/.zshrc
+source ~/.zshrc
