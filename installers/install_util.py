@@ -117,6 +117,15 @@ def standard_build(util, wd):
     util.make(wd)
     util.make_install(wd)
 
+@installer
+def help2man(util: InstallUtil):
+    url = "http://mirrors.ocf.berkeley.edu/gnu/help2man/help2man-1.49.3.tar.xz"
+    dl_path = os.path.join(util.nrs_root, "env", os.path.basename(url))
+    util.wget(url, dl_path)
+    util.exec_shell(f'tar -xf {dl_path}')
+    repo_dir = os.path.join(util.nrs_root, "env", "help2man-1.49.3")
+    standard_build(util, repo_dir)
+
 
 @installer
 def autoconf(util: InstallUtil):
@@ -140,15 +149,20 @@ def neovim(util: InstallUtil):
 
 @installer
 def lazyvim(util: InstallUtil):
-    # repo_dir = standard_clone("https://github.com/LazyVim/starter")
-    repo_dir = util.nrs_root + "/env/nvim"
+    repo_dir = standard_clone("https://github.com/LazyVim/starter")
+    repo_dir = util.nrs_root + "/env/starter"
     util.link(repo_dir, os.path.expanduser("~") + "/.config/nvim")
 
 
-@installer
-def nerd_fonts(util: InstallUtil):
-    repo_dir = standard_clone("https://github.com/ryanoasis/nerd-fonts.git")
-    util.exec_shell(f"{repo_dir}/install.sh Meslo")
+# @installer
+# def nerd_fonts(util: InstallUtil):
+    # repo_dir = standard_clone("https://github.com/ryanoasis/nerd-fonts.git")
+    # url = 'https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip'
+    # repo_dir = util.get_clone_path(url)
+    # util.wget(url, repo_dir)
+
+    # util.exec_shell(f"{repo_dir}/install.sh Meslo")
+    
 
 
 @installer
@@ -182,9 +196,10 @@ if __name__ == "__main__":
     util = InstallUtil(debug=args.debug, log=args.log, dry=args.dry)
 
     # Installing dependencies
+    help2man(util)
     autoconf(util)
     zplug(util)
     neovim(util)
     lazyvim(util)
-    nerd_fonts(util)
+    # nerd_fonts(util)
     fzf(util)

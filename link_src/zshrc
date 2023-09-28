@@ -3,7 +3,7 @@
 #export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-export XDG_CACHE_HOME=/nobackup/yishe2/p10k.cache
+XDG_CACHE_HOME=$STATIC_DIR/cache;export XDG_CACHE_HOME
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -84,6 +84,7 @@ alias un_tgz="tar -xvzf"
 alias un_gz="gzip -d"
 alias fetch_repo="cd ${fea}; git fetch; cd-"
 alias super_clean="lcleanup --killprocs;lcleanup --unmount;lcleanup --mqueues;lcleanup --reset"
+alias soft_clean="lcleanup --killprocs;lcleanup --unmount;"
 #alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp lib infra sysdb sys platforms common linux inc manageability"
 alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp sysdb manageability"
 alias find_git_base="git merge-base origin/main HEAD"
