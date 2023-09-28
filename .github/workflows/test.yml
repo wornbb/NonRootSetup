@@ -32,8 +32,7 @@ jobs:
           du -sh ~
       - name: Test
         run: |
-          ./install.sh
-        shell: zsh
+          /bin/zsh ./install.sh
       - name: check home disk space
         run: |
           du -sh ~
