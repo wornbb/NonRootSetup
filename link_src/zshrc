@@ -9,10 +9,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 NONROOT_PREFIX=$NONROOT_HOME/env;export NONROOT_PREFIX
 ZPLUG_HOME=$NONROOT_HOME/env/zplug; export ZPLUG_HOME
-PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:$PATH;export PATH
+PATH=$NONROOT_PREFIX/bin:$NONROOT_PREFIX/sbin:/usr/cisco/bin:/router/bin/:/auto/smartdev/bin:$PATH;export PATH
 
 XDG_CACHE_HOME=$STATIC_DIR/cache;export XDG_CACHE_HOME
 XDG_DATA_HOME=$STATIC_DIR/data;export XDG_DATA_HOME
@@ -25,7 +26,14 @@ XDG_DATA_HOME=$STATIC_DIR/data;export XDG_DATA_HOME
 # init zsh plugin manager
 export ZPLUG_HOME=~/.zplug
 source $ZPLUG_HOME/init.zsh
-export PATH=/usr/share/Modules/bin:/router/bin::/usr/cisco/bin:/usr/cisco/etc:/bin:/usr/X11R6/bin:/usr/sbin:/sbin:/usr/bin:.:/usr/local/sbin:/opt/puppetlabs/bin:/users/yishe2/.fzf/bin:/router/bin
+export nobk=/nobackup/yishe2
+export ws=$nobk/workspace
+export fea=/nobackup/yishe2/iosxr
+export share=/ws/yishe2-sjc/share
+if [ ! -d "$ws" ]; then
+  mkdir $ws
+fi
+#export PATH=/usr/share/Modules/bin:/router/bin::/usr/cisco/bin:/usr/cisco/etc:/bin:/usr/X11R6/bin:/usr/sbin:/sbin:/usr/bin:.:/usr/local/sbin:/opt/puppetlabs/bin:/users/yishe2/.fzf/bin:/router/bin
 
 # ----- plugin config start ------
 #ZVM_VI_ESCAPE_BINDKEY=jk
@@ -65,6 +73,38 @@ function precommit {
                 echo "Cannot find ddts from branch name ${branch}"
         fi
 }
+new_branch ()
+{
+  git fetch
+  git checkout  origin/main -B $1.main.fix
+}
+set_title ()
+{
+  title_f=`hostname`_window_title
+  if [[ $# > 0 ]]; then
+    string=""
+    # Combine inputs
+    for str in "$@"
+    do
+      string+=" $str"
+    done
+    echo "$string" > $title_f
+  fi
+  echo -ne "\033]0;"`cat $title_f`"\007"
+}
+branch_ddts ()
+{
+  git -C $fea branch --show-current | cut -d'.' -f1
+}
+get_ws ()
+{
+  ws_p=$ws/$(branch_ddts)
+  if [ ! -d $ws/$(branch_ddts) ]; then
+    mkdir $ws_p
+  fi
+  echo $ws_p | it2copy >/dev/null
+  echo $ws_p
+}
 # Styling
 export LS_COLORS='rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:'
 # disable sort when completing `git checkout`
@@ -89,9 +129,11 @@ alias soft_clean="lcleanup --killprocs;lcleanup --unmount;"
 #alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp lib infra sysdb sys platforms common linux inc manageability"
 alias prep_vscode="/auto/smartdev/bin/compile-db -c ipv4/bgp sysdb manageability"
 alias find_git_base="git merge-base origin/main HEAD"
-alias precommit="/auto/firex/bin/precommit"
+#alias precommit="/auto/firex/bin/precommit"
+alias find_firex="/auto/firex/bin/myruns"
+
+
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

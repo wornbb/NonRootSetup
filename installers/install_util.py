@@ -204,6 +204,6 @@ if __name__ == "__main__":
     autoconf(util)
     zplug(util)
     neovim(util)
-    lazyvim(util)
+    # lazyvim(util)
     # nerd_fonts(util)
     fzf(util)

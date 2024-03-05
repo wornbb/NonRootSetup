@@ -8,7 +8,6 @@ fi
 
 SetupHome=$PWD
 PATH=$PWD/env/bin:$PATH
-rm -rf "$PWD"/env/*
 
 PYTHON_HOME="$SetupHome"/env/yienv3
 /bin/python3 -m venv "$PYTHON_HOME"
